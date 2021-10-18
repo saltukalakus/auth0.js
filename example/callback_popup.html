@@ -3,6 +3,9 @@
   <head>
     <script src="/auth0.js"></script>
     <script type="text/javascript">
+      
+      alert("Wait here before pop-up close");
+      
       var auth0 = new auth0.WebAuth({
         domain: 'saltukalakus.auth0.com',
         redirectUri: 'http://localhost:3000',
@@ -10,7 +13,6 @@
         popupOrigin: 'http://localhost:3000'
       });
 
-      alert("Wait here before pop-up close");
       auth0.popup.callback();
     </script>
   </head>
