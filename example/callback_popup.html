@@ -4,12 +4,13 @@
     <script src="/auth0.js"></script>
     <script type="text/javascript">
       var auth0 = new auth0.WebAuth({
-        domain: 'brucke.auth0.com',
-        redirectUri: 'http://localhost:3000/example',
-        clientID: 'k5u3o2fiAA8XweXEEX604KCwCjzjtMU6',
+        domain: 'saltukalakus.auth0.com',
+        redirectUri: 'http://localhost:3000',
+        clientID: 'TRk7rVyvTDKjNA5YZ0KEn3F38I3fqf6x',
         popupOrigin: 'http://localhost:3000'
       });
 
+      alert("Wait here before pop-up close");
       auth0.popup.callback();
     </script>
   </head>

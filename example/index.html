@@ -476,11 +476,11 @@
         var domain =
           $domainInput.val() ||
           Cookies.get('auth0_domain') ||
-          'brucke.auth0.com';
+          'saltukalakus.auth0.com';
         var clientId =
           $clientIdInput.val() ||
           Cookies.get('auth0_client_id') ||
-          'k5u3o2fiAA8XweXEEX604KCwCjzjtMU6';
+          'TRk7rVyvTDKjNA5YZ0KEn3F38I3fqf6x';
         var clientIdPwl =
           $clientIdPwl.val() ||
           Cookies.get('auth0_client_id_pwl') ||
@@ -488,9 +488,9 @@
         var userEmail =
           $userEmailInput.val() ||
           Cookies.get('auth0_user_email') ||
-          'johnfoo@gmail.com';
+          'saltukalakus@gmail.com';
         var userPass =
-          $userPwdInput.val() || Cookies.get('auth0_user_pw') || '1234';
+          $userPwdInput.val() || Cookies.get('auth0_user_pw') || '111111';
         var configOrganization =
           $configOrganization.val() ||
           Cookies.get('auth0_config_organization') ||
@@ -502,7 +502,7 @@
           clientID: clientId,
           plugins: [new CordovaAuth0Plugin()],
           scope: 'openid email',
-          responseType: 'code'
+          responseType: 'token id_token'
         };
 
         webAuth = new auth0.WebAuth(webAuthConfig);
