@@ -422,6 +422,39 @@
 
         <tr>
             
+                <td class="name"><code>stateExpiration</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>number of minutes for the stored state to be kept. Defaults to 30 minutes.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>organization</code></td>
             
 
@@ -448,7 +481,7 @@
 
             
 
-            <td class="description last"><p>the Id of an organization to log in to</p></td>
+            <td class="description last"><p>the id or name of an organization to log in to</p></td>
         </tr>
 
     
@@ -515,6 +548,72 @@
             
 
             <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>legacySameSiteCookie</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>set this to <code>false</code> to disable the legacy compatibility cookie that is created for older browsers that don't support the SameSite attribute (defaults to <code>true</code>)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cookieDomain</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The domain the cookie is accessible from. If not set, the cookie is scoped to the current domain, including the subdomain. To keep a user logged in across multiple subdomains set this to your top-level domain and prefixed with a <code>.</code> (eg: <code>.example.com</code>).</p></td>
         </tr>
 
     
@@ -595,7 +694,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line44">line 44</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line47">line 47</a>
     </li></ul></dd>
     
 
@@ -702,7 +801,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line175">line 175</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line193">line 193</a>
     </li></ul></dd>
     
 
@@ -770,7 +869,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line172">line 172</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line190">line 190</a>
     </li></ul></dd>
     
 
@@ -1119,7 +1218,7 @@ After that, you'll have to use the <code>parseHash</code> function at the specif
 
             
 
-            <td class="description last"><p>scopes to be requested during Auth. e.g. <code>openid email</code></p></td>
+            <td class="description last"><p>scopes to be requested during Auth. e.g. <code>openid email</code>. Defaults to <code>openid profile email</code>.</p></td>
         </tr>
 
     
@@ -1185,7 +1284,7 @@ After that, you'll have to use the <code>parseHash</code> function at the specif
 
             
 
-            <td class="description last"><p>the Id of an organization to log in to</p></td>
+            <td class="description last"><p>the id or name of an organization to log in to</p></td>
         </tr>
 
     
@@ -1299,7 +1398,7 @@ After that, you'll have to use the <code>parseHash</code> function at the specif
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line720">line 720</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line803">line 803</a>
     </li></ul></dd>
     
 
@@ -1333,6 +1432,16 @@ After that, you'll have to use the <code>parseHash</code> function at the specif
 
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>auth0.authorize({
+  audience: 'https://mystore.com/api/v2',
+  scope: 'read:order write:order',
+  responseType: 'token',
+  redirectUri: 'https://example.com/auth/callback'
+});</code></pre>
 
 
 
@@ -1538,7 +1647,7 @@ After that, you'll have to use the <code>parseHash</code> function at the specif
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line650">line 650</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line732">line 732</a>
     </li></ul></dd>
     
 
@@ -1590,6 +1699,17 @@ After that, you'll have to use the <code>parseHash</code> function at the specif
 
 <div class="description">
     <p>Renews an existing session on Auth0's servers using <code>response_mode=web_message</code></p>
+<p>Allows you to acquire a new token from Auth0 for a user who already
+has an SSO session established against Auth0 for your domain.
+If the user is not authenticated, the authentication result will be empty
+and you'll receive an error like this: <code>{error: 'login_required'}</code>.
+The method accepts any valid OAuth2 parameters that would normally be sent to <code>/authorize</code>.</p>
+<p>Everything happens inside an iframe, so it will not reload your application or redirect away from it.</p>
+<p><strong>Important:</strong> If you're not using the hosted login page to do social logins,
+you have to use your own <a href="https://manage.auth0.com/#/connections/social">social connection keys</a>.
+If you use Auth0's dev keys, you'll always get <code>login_required</code> as an error when calling <code>checkSession</code>.</p>
+<p><strong>Important:</strong> Because there is no redirect in this method, <code>responseType: 'code'</code> is not supported and will throw an error.
+Remember to add the URL where the authorization request originates from to the Allowed Web Origins list of your Auth0 Application in the <a href="https://manage.auth0.com/">Dashboard</a> under your Applications's <strong>Settings</strong>.</p>
 </div>
 
 
@@ -1909,6 +2029,39 @@ After that, you'll have to use the <code>parseHash</code> function at the specif
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>organization</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the id or name of an organization to log in to</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -1984,7 +2137,7 @@ After that, you'll have to use the <code>parseHash</code> function at the specif
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line584">line 584</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line641">line 641</a>
     </li></ul></dd>
     
 
@@ -2018,6 +2171,17 @@ After that, you'll have to use the <code>parseHash</code> function at the specif
 
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>auth0.checkSession({
+  audience: 'https://mystore.com/api/v2',
+  scope: 'read:order write:order'
+},
+function(err, authResult) {
+  // Authentication tokens or error
+});</code></pre>
 
 
 
@@ -2081,7 +2245,7 @@ After that, you'll have to use the <code>parseHash</code> function at the specif
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line930">line 930</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line1021">line 1021</a>
     </li></ul></dd>
     
 
@@ -2169,7 +2333,7 @@ After that, you'll have to use the <code>parseHash</code> function at the specif
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line941">line 941</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line1032">line 1032</a>
     </li></ul></dd>
     
 
@@ -2432,6 +2596,39 @@ After the redirect to <code>redirectUri</code>, use <code>parseHash</code> to re
 
         <tr>
             
+                <td class="name"><code>captcha</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the attempted solution for the captcha, if one was presented</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>onRedirecting</code></td>
             
 
@@ -2529,7 +2726,7 @@ After the redirect to <code>redirectUri</code>, use <code>parseHash</code> to re
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line817">line 817</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line907">line 907</a>
     </li></ul></dd>
     
 
@@ -2817,7 +3014,7 @@ After the redirect to <code>redirectUri</code>, use <code>parseHash</code> to re
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line951">line 951</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line1042">line 1042</a>
     </li></ul></dd>
     
 
@@ -3148,7 +3345,7 @@ Tokens signed with other algorithms will not be accepted.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line187">line 187</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line205">line 205</a>
     </li></ul></dd>
     
 
@@ -3175,6 +3372,23 @@ Tokens signed with other algorithms will not be accepted.</p>
 
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>auth0.parseHash({ hash: window.location.hash }, function(err, authResult) {
+  if (err) {
+    return console.log(err);
+  }
+  // The contents of authResult depend on which authentication parameters were used.
+  // It can include the following:
+  // authResult.accessToken - access token for the API specified by `audience`
+  // authResult.expiresIn - string with the access token's expiration time in seconds
+  // authResult.idToken - ID token JWT containing user profile information
+  auth0.client.userInfo(authResult.accessToken, function(err, user) {
+    // Now you have the user's information
+  });
+});</code></pre>
 
 
 
@@ -3450,7 +3664,7 @@ This only works when 3rd party cookies are enabled in the browser. After the /co
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line873">line 873</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line964">line 964</a>
     </li></ul></dd>
     
 
@@ -3671,6 +3885,39 @@ This only works when 3rd party cookies are enabled in the browser. After the /co
 
         <tr>
             
+                <td class="name"><code>captcha</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the attempted solution for the captcha, if one was presented</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>connection</code></td>
             
 
@@ -3832,7 +4079,7 @@ This only works when 3rd party cookies are enabled in the browser. After the /co
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line665">line 665</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line747">line 747</a>
     </li></ul></dd>
     
 
@@ -4186,7 +4433,7 @@ This only works when 3rd party cookies are enabled in the browser. After the /co
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line976">line 976</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line1067">line 1067</a>
     </li></ul></dd>
     
 
@@ -4384,7 +4631,7 @@ This function can only be used in the context of a Classic Universal Login Page.
                 </td>
             
 
-            <td class="description last"><p>An object containaing templates for each captcha provider</p>
+            <td class="description last"><p>An object containing templates for each captcha provider</p>
                 <h6>Properties</h6>
                 
 
@@ -4438,7 +4685,7 @@ This function can only be used in the context of a Classic Universal Login Page.
 
             
 
-            <td class="description last"><p>template function receiving the challenge and returning an string</p></td>
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
         </tr>
 
     
@@ -4471,7 +4718,7 @@ This function can only be used in the context of a Classic Universal Login Page.
 
             
 
-            <td class="description last"><p>template function receiving the challenge and returning an string</p></td>
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
         </tr>
 
     
@@ -4504,7 +4751,172 @@ This function can only be used in the context of a Classic Universal Login Page.
 
             
 
-            <td class="description last"><p>template function receiving the challenge and returning an string</p></td>
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hcaptcha</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>friendly_captcha</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>arkose</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth0_v2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function returning a custom error message when the challenge could not be fetched, receives the error as first argument</p></td>
         </tr>
 
     
@@ -4550,7 +4962,7 @@ This function can only be used in the context of a Classic Universal Login Page.
                 </td>
             
 
-            <td class="description last"><p>the ISO code of the language for recaptcha</p></td>
+            <td class="description last"><p>the ISO code of the language for the captcha provider</p></td>
         </tr>
 
     
@@ -4570,7 +4982,7 @@ This function can only be used in the context of a Classic Universal Login Page.
             <td class="type">
             
                 
-<span class="param-type">function</span>
+<span class="param-type"><a href="global.html#captchaLoadedCallback">captchaLoadedCallback</a></span>
 
 
             
@@ -4590,7 +5002,7 @@ This function can only be used in the context of a Classic Universal Login Page.
 
             
 
-            <td class="description last"><p>An optional completion callback</p></td>
+            <td class="description last"><p>An optional callback called after captcha is loaded</p></td>
         </tr>
 
     
@@ -4631,7 +5043,1227 @@ This function can only be used in the context of a Classic Universal Login Page.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line1041">line 1041</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line1139">line 1139</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="renderPasswordlessCaptcha"><span class="type-signature"></span>renderPasswordlessCaptcha<span class="signature">(element, options, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Renders the passwordless captcha challenge in the provided element.
+This function can only be used in the context of a Classic Universal Login Page.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The element where the captcha needs to be rendered</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The configuration options for the captcha</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>templates</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>An object containing templates for each captcha provider</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>auth0</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>recaptcha_v2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>recaptcha_enterprise</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hcaptcha</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>friendly_captcha</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>arkose</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth0_v2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function returning a custom error message when the challenge could not be fetched, receives the error as first argument</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lang</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    en
+                
+                </td>
+            
+
+            <td class="description last"><p>the ISO code of the language for the captcha provider</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#captchaLoadedCallback">captchaLoadedCallback</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>An optional callback called after captcha is loaded</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line1164">line 1164</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="renderPasswordResetCaptcha"><span class="type-signature"></span>renderPasswordResetCaptcha<span class="signature">(element, options, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Renders the password reset captcha challenge in the provided element.
+This function can only be used in the context of a Classic Universal Login Page.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The element where the captcha needs to be rendered</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The configuration options for the captcha</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>templates</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>An object containing templates for each captcha provider</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>auth0</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>recaptcha_v2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>recaptcha_enterprise</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hcaptcha</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>friendly_captcha</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>arkose</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth0_v2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function receiving the challenge and returning a string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>template function returning a custom error message when the challenge could not be fetched, receives the error as first argument</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lang</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    en
+                
+                </td>
+            
+
+            <td class="description last"><p>the ISO code of the language for the captcha provider</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#captchaLoadedCallback">captchaLoadedCallback</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>An optional callback called after captcha is loaded</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line1193">line 1193</a>
     </li></ul></dd>
     
 
@@ -5237,7 +6869,7 @@ Watch out! If you're not using the hosted login page to do social logins, you ha
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line502">line 502</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line559">line 559</a>
     </li></ul></dd>
     
 
@@ -5690,7 +7322,7 @@ Watch out! If you're not using the hosted login page to do social logins, you ha
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line699">line 699</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line782">line 782</a>
     </li></ul></dd>
     
 
@@ -5953,7 +7585,7 @@ The login will be done using /oauth/token with password-realm grant type.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line775">line 775</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line865">line 865</a>
     </li></ul></dd>
     
 
@@ -6276,7 +7908,7 @@ Tokens signed with other algorithms will not be accepted.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line274">line 274</a>
+        <a href="web-auth_index.js.html">web-auth/index.js</a>, <a href="web-auth_index.js.html#line308">line 308</a>
     </li></ul></dd>
     
 
@@ -6328,7 +7960,7 @@ Tokens signed with other algorithms will not be accepted.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Fri Oct 15 2021 14:24:07 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon May 20 2024 12:22:42 GMT+0530 (India Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

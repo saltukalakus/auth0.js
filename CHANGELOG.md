@@ -1,4 +1,187 @@
-## [v9.17.0](https://github.com/auth0/auth0.js/tree/v9.17.0) (2021-10-15)
+# Change Log
+
+## [v9.26.1](https://github.com/auth0/auth0.js/tree/v9.26.1) (2024-05-20)
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.26.0...v9.26.1)
+
+**Fixed**
+- Call done callback once Arkose is ready [\#1433](https://github.com/auth0/auth0.js/pull/1433) ([srijonsaha](https://github.com/srijonsaha))
+
+## [v9.26.0](https://github.com/auth0/auth0.js/tree/v9.26.0) (2024-04-30)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.25.0...v9.26.0)
+
+**Changed**
+
+- Update endpoint and add API to get password reset challenge [\#1431](https://github.com/auth0/auth0.js/pull/1431) ([srijonsaha](https://github.com/srijonsaha))
+
+**Note:** PR #1431 is a breaking change for a newly-added, WIP, undocumented feature.
+
+## [v9.25.0](https://github.com/auth0/auth0.js/tree/v9.25.0) (2024-04-25)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.24.1...v9.25.0)
+
+**Added**
+
+- Add APIs to get captcha challenge for reset password [\#1426](https://github.com/auth0/auth0.js/pull/1426) ([srijonsaha](https://github.com/srijonsaha))
+
+## [v9.24.1](https://github.com/auth0/auth0.js/tree/v9.24.1) (2024-01-04)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.24.0...v9.24.1)
+
+**Changed**
+
+- [IAMRISK-3011] Auth0 V2 Captcha failOpen support [\#1382](https://github.com/auth0/auth0.js/pull/1382) ([alexkoumarianos-okta](https://github.com/alexkoumarianos-okta))
+
+## [v9.24.0](https://github.com/auth0/auth0.js/tree/v9.24.0) (2023-12-13)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.23.3...v9.24.0)
+
+**Added**
+
+- [IAMRISK-2915] Added support for Auth0 v2 captcha provider [\#1368](https://github.com/auth0/auth0.js/pull/1368) ([alexkoumarianos-okta](https://github.com/alexkoumarianos-okta))
+
+## [v9.23.3](https://github.com/auth0/auth0.js/tree/v9.23.3) (2023-11-13)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.23.2...v9.23.3)
+
+**Security**
+
+- Bump idtoken-verifier from 2.2.2 to 2.2.4 [\#1362](https://github.com/auth0/auth0.js/pull/1362) ([cgetzen](https://github.com/cgetzen))
+
+## [v9.23.2](https://github.com/auth0/auth0.js/tree/v9.23.2) (2023-10-27)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.23.1...v9.23.2)
+
+**Security**
+
+- Bump crypto-js from 4.1.1 to 4.2.0 [\#1354](https://github.com/auth0/auth0.js/pull/1354) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v9.23.1](https://github.com/auth0/auth0.js/tree/v9.23.1) (2023-10-19)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.23.0...v9.23.1)
+
+**Changed**
+
+- [IAMRISK-2817] Update API for Arkose to use a callback based API [\#1349](https://github.com/auth0/auth0.js/pull/1349) ([srijonsaha](https://github.com/srijonsaha))
+
+## [v9.23.0](https://github.com/auth0/auth0.js/tree/v9.23.0) (2023-10-06)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.22.1...v9.23.0)
+
+**Added**
+
+- [IAMRISK-2602] Add support for Arkose [\#1341](https://github.com/auth0/auth0.js/pull/1341) ([srijonsaha](https://github.com/srijonsaha))
+
+## [v9.22.1](https://github.com/auth0/auth0.js/tree/v9.22.1) (2023-07-18)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.22.0...v9.22.1)
+
+**Changed**
+
+- Do not lowercase org_name claim [\#1315](https://github.com/auth0/auth0.js/pull/1315) ([frederikprijck](https://github.com/frederikprijck))
+
+## [v9.22.0](https://github.com/auth0/auth0.js/tree/v9.22.0) (2023-07-13)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.21.0...v9.22.0)
+
+**Added**
+
+- Added support for hCaptcha and Friendly Captcha [\#1312](https://github.com/auth0/auth0.js/pull/1312) ([DominickBattistini](https://github.com/DominickBattistini))
+- Support Organization Name [\#1313](https://github.com/auth0/auth0.js/pull/1313) ([frederikprijck](https://github.com/frederikprijck))
+
+**Security**
+
+- Security: Update Dependencies [\#1310](https://github.com/auth0/auth0.js/pull/1310) ([evansims](https://github.com/evansims))
+
+## [v9.21.0](https://github.com/auth0/auth0.js/tree/v9.21.0) (2023-05-24)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.20.2...v9.21.0)
+
+**Added**
+
+- Add cookieDomain option [\#1304](https://github.com/auth0/auth0.js/pull/1304) ([telmaantunes](https://github.com/telmaantunes))
+
+## [v9.20.2](https://github.com/auth0/auth0.js/tree/v9.20.2) (2023-02-28)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.20.1...v9.20.2)
+
+**Fixed**
+
+- fix(docs): document `error()` option for `renderCaptcha()` [\#1290](https://github.com/auth0/auth0.js/pull/1290) ([pmalouin](https://github.com/pmalouin))
+
+**Security**
+
+- chore: update superagent to 7.1.5 [\#1296](https://github.com/auth0/auth0.js/pull/1296) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
+## [v9.20.1](https://github.com/auth0/auth0.js/tree/v9.20.1) (2023-01-12)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.20.0...v9.20.1)
+
+**Fixed**
+
+- Updated jsdocs for Authentication#login [\#1284](https://github.com/auth0/auth0.js/pull/1284) ([siddtheone](https://github.com/siddtheone))
+
+**Security**
+
+- Bump jsonwebtoken from 8.5.1 to 9.0.0 [\#1282](https://github.com/auth0/auth0.js/pull/1282) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v9.20.0](https://github.com/auth0/auth0.js/tree/v9.20.0) (2022-12-13)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.19.2...v9.20.0)
+
+**Added**
+
+- Support Captcha challenge for passwordless login [\#1277](https://github.com/auth0/auth0.js/pull/1277) ([DominickBattistini](https://github.com/DominickBattistini))
+
+## [v9.19.2](https://github.com/auth0/auth0.js/tree/v9.19.2) (2022-11-04)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.19.1...v9.19.2)
+
+**Changed**
+
+- Regenerate API docs using new readme [\#1271](https://github.com/auth0/auth0.js/pull/1271) ([frederikprijck](https://github.com/frederikprijck))
+- Update readme based on the internal redesign [\#1269](https://github.com/auth0/auth0.js/pull/1269) ([frederikprijck](https://github.com/frederikprijck))
+
+**Fixed**
+
+- support timeout option in Popup.loginWithCredentials [\#1273](https://github.com/auth0/auth0.js/pull/1273) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
+## [v9.19.1](https://github.com/auth0/auth0.js/tree/v9.19.1) (2022-09-09)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.19.0...v9.19.1)
+
+**Changed**
+
+- Clean up old/missing library migration links [\#1256](https://github.com/auth0/auth0.js/pull/1256) ([stevehobbsdev](https://github.com/stevehobbsdev))
+- Clarify usage of legacySameSiteCookie in readme [\#1255](https://github.com/auth0/auth0.js/pull/1255) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
+**Security**
+
+- Security: Bump dev dependencies and update lockfile [\#1244](https://github.com/auth0/auth0.js/pull/1244) ([evansims](https://github.com/evansims))
+
+## [v9.19.0](https://github.com/auth0/auth0.js/tree/v9.19.0) (2022-01-25)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.18.1...v9.19.0)
+
+**Added**
+
+- Add compatibility cookie for SameSite, with option to turn it off [\#1232](https://github.com/auth0/auth0.js/pull/1232) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
+## [v9.18.1](https://github.com/auth0/auth0.js/tree/v9.18.1) (2022-01-14)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.18.0...v9.18.1)
+
+**Fixed**
+
+- Set sameSite to 'none' for cookies when using HTTPS [\#1229](https://github.com/auth0/auth0.js/pull/1229) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
+## [v9.18.0](https://github.com/auth0/auth0.js/tree/v9.18.0) (2021-11-09)
+
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v9.17.0...v9.18.0)
+
+**Added**
+
+- Make state expiration configurable [\#1217](https://github.com/auth0/auth0.js/pull/1217) ([aedelbro](https://github.com/aedelbro))
 
 [Full Changelog](https://github.com/auth0/auth0.js/compare/v9.16.4...v9.17.0)
 

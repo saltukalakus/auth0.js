@@ -35,9 +35,12 @@ function defaultClock() {
  * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
  * @param {Number} [options.leeway] number of seconds to account for clock skew when validating time-based claims in ID tokens. Defaults to 60 seconds.
  * @param {Number} [options.maxAge] maximum elapsed time in seconds since the last time the user was actively authenticated by the authorization server.
- * @param {String} [options.organization] the Id of an organization to log in to
+ * @param {Number} [options.stateExpiration] number of minutes for the stored state to be kept. Defaults to 30 minutes.
+ * @param {String} [options.organization] the id or name of an organization to log in to
  * @param {String} [options.invitation] the ID of an invitation to accept. This is available from the user invitation URL that is given when participating in a user invitation flow
  * @param {Array} [options.plugins]
+ * @param {Boolean} [options.legacySameSiteCookie] set this to `false` to disable the legacy compatibility cookie that is created for older browsers that don't support the SameSite attribute (defaults to `true`)
+ * @param {String} [options.cookieDomain]  The domain the cookie is accessible from. If not set, the cookie is scoped to the current domain, including the subdomain. To keep a user logged in across multiple subdomains set this to your top-level domain and prefixed with a `.` (eg: `.example.com`).
  * @param {Number} [options._timesToRetryFailedRequests] Number of times to retry a failed request, according to {@link https://github.com/visionmedia/superagent/blob/master/lib/request-base.js}
  * @see {@link https://auth0.com/docs/api/authentication}
  */
@@ -89,6 +92,16 @@ function WebAuth(options) {
         optional: true,
         type: 'number',
         message: 'maxAge is not valid'
+      },
+      stateExpiration: {
+        optional: true,
+        type: 'number',
+        message: 'stateExpiration is not valid'
+      },
+      legacySameSiteCookie: {
+        optional: true,
+        type: 'boolean',
+        message: 'legacySameSiteCookie option is not valid'
       },
       _disableDeprecationWarnings: {
         optional: true,
@@ -149,9 +162,10 @@ function WebAuth(options) {
       ? this.baseOptions._sendTelemetry
       : true;
 
-  this.baseOptions._timesToRetryFailedRequests = options._timesToRetryFailedRequests
-    ? parseInt(options._timesToRetryFailedRequests)
-    : 0;
+  this.baseOptions._timesToRetryFailedRequests =
+    options._timesToRetryFailedRequests
+      ? parseInt(options._timesToRetryFailedRequests)
+      : 0;
 
   this.baseOptions.tenant =
     (this.baseOptions.overrides && this.baseOptions.overrides.__tenant) ||
@@ -163,6 +177,10 @@ function WebAuth(options) {
 
   this.baseOptions.jwksURI =
     this.baseOptions.overrides && this.baseOptions.overrides.__jwks_uri;
+
+  if (options.legacySameSiteCookie !== false) {
+    this.baseOptions.legacySameSiteCookie = true;
+  }
 
   this.transactionManager = new TransactionManager(this.baseOptions);
 
@@ -194,6 +212,22 @@ function WebAuth(options) {
  * If the {@link userInfo} call fails, the {@link userInfo} error will be passed to the callback.
  * Tokens signed with other algorithms will not be accepted.
  *
+ * @example
+ * auth0.parseHash({ hash: window.location.hash }, function(err, authResult) {
+ *   if (err) {
+ *     return console.log(err);
+ *   }
+
+ *   // The contents of authResult depend on which authentication parameters were used.
+ *   // It can include the following:
+ *   // authResult.accessToken - access token for the API specified by `audience`
+ *   // authResult.expiresIn - string with the access token's expiration time in seconds
+ *   // authResult.idToken - ID token JWT containing user profile information
+
+ *   auth0.client.userInfo(authResult.accessToken, function(err, user) {
+ *     // Now you have the user's information
+ *   });
+ *});
  * @method parseHash
  * @param {Object} options
  * @param {String} options.hash the url hash. If not provided it will extract from window.location.hash
@@ -203,7 +237,7 @@ function WebAuth(options) {
  * @param {authorizeCallback} cb
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.parseHash = function(options, cb) {
+WebAuth.prototype.parseHash = function (options, cb) {
   var parsedQs;
   var err;
 
@@ -290,7 +324,7 @@ WebAuth.prototype.parseHash = function(options, cb) {
  * @param {authorizeCallback} cb
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.validateAuthenticationResponse = function(
+WebAuth.prototype.validateAuthenticationResponse = function (
   options,
   parsedHash,
   cb
@@ -324,7 +358,7 @@ WebAuth.prototype.validateAuthenticationResponse = function(
   var transactionOrganization = transaction && transaction.organization;
   var appState = options.state || (transaction && transaction.appState) || null;
 
-  var callback = function(err, payload) {
+  var callback = function (err, payload) {
     if (err) {
       return cb(err);
     }
@@ -346,109 +380,132 @@ WebAuth.prototype.validateAuthenticationResponse = function(
     return callback(null, null);
   }
 
-  return this.validateToken(parsedHash.id_token, transactionNonce, function(
-    validationError,
-    payload
-  ) {
-    if (!validationError) {
-      // Verify the organization
-      if (transactionOrganization) {
-        if (!payload.org_id) {
-          return callback(
-            error.invalidToken(
-              'Organization Id (org_id) claim must be a string present in the ID token'
-            )
-          );
+  return this.validateToken(
+    parsedHash.id_token,
+    transactionNonce,
+    function (validationError, payload) {
+      if (!validationError) {
+        // Verify the organization
+        if (transactionOrganization) {
+          if (transactionOrganization.indexOf('org_') === 0) {
+            if (!payload.org_id) {
+              return callback(
+                error.invalidToken(
+                  'Organization Id (org_id) claim must be a string present in the ID token'
+                )
+              );
+            }
+
+            if (payload.org_id !== transactionOrganization) {
+              return callback(
+                error.invalidToken(
+                  'Organization Id (org_id) claim value mismatch in the ID token; expected "' +
+                  transactionOrganization +
+                  '", found "' +
+                  payload.org_id +
+                  '"'
+                )
+              );
+            }
+          } else {
+            if (!payload.org_name) {
+              return callback(
+                error.invalidToken(
+                  'Organization Name (org_name) claim must be a string present in the ID token'
+                )
+              );
+            }
+
+            if (payload.org_name !== transactionOrganization.toLowerCase()) {
+              return callback(
+                error.invalidToken(
+                  'Organization Name (org_name) claim value mismatch in the ID token; expected "' +
+                  transactionOrganization +
+                  '", found "' +
+                  payload.org_name +
+                  '"'
+                )
+              );
+            }
+          }
         }
 
-        if (payload.org_id !== transactionOrganization) {
-          return callback(
-            error.invalidToken(
-              'Organization Id (org_id) claim value mismatch in the ID token; expected "' +
-                transactionOrganization +
-                '", found "' +
-                payload.org_id +
-                '"'
-            )
-          );
+        if (!parsedHash.access_token) {
+          return callback(null, payload);
         }
+
+        // id_token's generated by non-oidc applications don't have at_hash
+        if (!payload.at_hash) {
+          return callback(null, payload);
+        }
+
+        // here we're absolutely sure that the id_token's alg is RS256
+        // and that the id_token is valid, so we can check the access_token
+        return new IdTokenVerifier().validateAccessToken(
+          parsedHash.access_token,
+          'RS256',
+          payload.at_hash,
+          function (err) {
+            if (err) {
+              return callback(error.invalidToken(err.message));
+            }
+            return callback(null, payload);
+          }
+        );
+      }
+
+      if (
+        validationError.error !== 'invalid_token' ||
+        (validationError.errorDescription &&
+          validationError.errorDescription.indexOf(
+            'Nonce (nonce) claim value mismatch in the ID token'
+          ) > -1)
+      ) {
+        return callback(validationError);
+      }
+
+      // if it's an invalid_token error, decode the token
+      var decodedToken = new IdTokenVerifier().decode(parsedHash.id_token);
+
+      // if the alg is not HS256, return the raw error
+      if (decodedToken.header.alg !== 'HS256') {
+        return callback(validationError);
+      }
+
+      if ((decodedToken.payload.nonce || null) !== transactionNonce) {
+        return callback({
+          error: 'invalid_token',
+          errorDescription:
+            'Nonce (nonce) claim value mismatch in the ID token; expected "' +
+            transactionNonce +
+            '", found "' +
+            decodedToken.payload.nonce +
+            '"'
+        });
       }
 
       if (!parsedHash.access_token) {
-        return callback(null, payload);
+        var noAccessTokenError = {
+          error: 'invalid_token',
+          description:
+            'The id_token cannot be validated because it was signed with the HS256 algorithm and public clients (like a browser) can’t store secrets. Please read the associated doc for possible ways to fix this. Read more: https://auth0.com/docs/errors/libraries/auth0-js/invalid-token#parsing-an-hs256-signed-id-token-without-an-access-token'
+        };
+        return callback(noAccessTokenError);
       }
 
-      // id_token's generated by non-oidc applications don't have at_hash
-      if (!payload.at_hash) {
-        return callback(null, payload);
-      }
-
-      // here we're absolutely sure that the id_token's alg is RS256
-      // and that the id_token is valid, so we can check the access_token
-      return new IdTokenVerifier().validateAccessToken(
+      // if the alg is HS256, use the /userinfo endpoint to build the payload
+      return _this.client.userInfo(
         parsedHash.access_token,
-        'RS256',
-        payload.at_hash,
-        function(err) {
-          if (err) {
-            return callback(error.invalidToken(err.message));
+        function (errUserInfo, profile) {
+          // if the /userinfo request fails, use the validationError instead
+          if (errUserInfo) {
+            return callback(errUserInfo);
           }
-          return callback(null, payload);
+          return callback(null, profile);
         }
       );
     }
-
-    if (
-      validationError.error !== 'invalid_token' ||
-      (validationError.errorDescription &&
-        validationError.errorDescription.indexOf(
-          'Nonce (nonce) claim value mismatch in the ID token'
-        ) > -1)
-    ) {
-      return callback(validationError);
-    }
-
-    // if it's an invalid_token error, decode the token
-    var decodedToken = new IdTokenVerifier().decode(parsedHash.id_token);
-
-    // if the alg is not HS256, return the raw error
-    if (decodedToken.header.alg !== 'HS256') {
-      return callback(validationError);
-    }
-
-    if ((decodedToken.payload.nonce || null) !== transactionNonce) {
-      return callback({
-        error: 'invalid_token',
-        errorDescription:
-          'Nonce (nonce) claim value mismatch in the ID token; expected "' +
-          transactionNonce +
-          '", found "' +
-          decodedToken.payload.nonce +
-          '"'
-      });
-    }
-
-    if (!parsedHash.access_token) {
-      var noAccessTokenError = {
-        error: 'invalid_token',
-        description:
-          'The id_token cannot be validated because it was signed with the HS256 algorithm and public clients (like a browser) can’t store secrets. Please read the associated doc for possible ways to fix this. Read more: https://auth0.com/docs/errors/libraries/auth0-js/invalid-token#parsing-an-hs256-signed-id-token-without-an-access-token'
-      };
-      return callback(noAccessTokenError);
-    }
-
-    // if the alg is HS256, use the /userinfo endpoint to build the payload
-    return _this.client.userInfo(parsedHash.access_token, function(
-      errUserInfo,
-      profile
-    ) {
-      // if the /userinfo request fails, use the validationError instead
-      if (errUserInfo) {
-        return callback(errUserInfo);
-      }
-      return callback(null, profile);
-    });
-  });
+  );
 };
 
 function buildParseHashResponse(qsParams, appState, token) {
@@ -480,7 +537,7 @@ function buildParseHashResponse(qsParams, appState, token) {
  * @param {String} nonce
  * @param {validateTokenCallback} cb
  */
-WebAuth.prototype.validateToken = function(token, nonce, cb) {
+WebAuth.prototype.validateToken = function (token, nonce, cb) {
   var verifier = new IdTokenVerifier({
     issuer: this.baseOptions.token_issuer,
     jwksURI: this.baseOptions.jwksURI,
@@ -490,7 +547,7 @@ WebAuth.prototype.validateToken = function(token, nonce, cb) {
     __clock: this.baseOptions.__clock || defaultClock
   });
 
-  verifier.verify(token, nonce, function(err, payload) {
+  verifier.verify(token, nonce, function (err, payload) {
     if (err) {
       return cb(error.invalidToken(err.message));
     }
@@ -522,7 +579,7 @@ WebAuth.prototype.validateToken = function(token, nonce, cb) {
  * @see {@link https://auth0.com/docs/api/authentication#authorize-client}
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.renewAuth = function(options, cb) {
+WebAuth.prototype.renewAuth = function (options, cb) {
   var handler;
   var usePostMessage = !!options.usePostMessage;
   var postMessageDataType = options.postMessageDataType || false;
@@ -571,7 +628,7 @@ WebAuth.prototype.renewAuth = function(options, cb) {
     timeout: timeout
   });
 
-  handler.login(usePostMessage, function(err, hash) {
+  handler.login(usePostMessage, function (err, hash) {
     if (typeof hash === 'object') {
       // hash was already parsed, so we just return it.
       // it's here to be backwards compatible and should be removed in the next major version.
@@ -584,6 +641,30 @@ WebAuth.prototype.renewAuth = function(options, cb) {
 /**
  * Renews an existing session on Auth0's servers using `response_mode=web_message`
  *
+ * Allows you to acquire a new token from Auth0 for a user who already
+ * has an SSO session established against Auth0 for your domain. 
+ * If the user is not authenticated, the authentication result will be empty 
+ * and you'll receive an error like this: `{error: 'login_required'}`.
+ * The method accepts any valid OAuth2 parameters that would normally be sent to `/authorize`.
+ * 
+ * Everything happens inside an iframe, so it will not reload your application or redirect away from it.
+ * 
+ * **Important:** If you're not using the hosted login page to do social logins, 
+ * you have to use your own [social connection keys](https://manage.auth0.com/#/connections/social). 
+ * If you use Auth0's dev keys, you'll always get `login_required` as an error when calling `checkSession`.
+ *
+ * **Important:** Because there is no redirect in this method, `responseType: 'code'` is not supported and will throw an error.
+
+ * Remember to add the URL where the authorization request originates from to the Allowed Web Origins list of your Auth0 Application in the [Dashboard](https://manage.auth0.com/) under your Applications's **Settings**.
+ * @example
+ * auth0.checkSession({
+ *   audience: 'https://mystore.com/api/v2',
+ *   scope: 'read:order write:order'
+ * },
+ * function(err, authResult) {
+ *   // Authentication tokens or error
+ * });
+ * 
  * @method checkSession
  * @param {Object} [options]
  * @param {String} [options.clientID] the Client ID found on your Application settings page
@@ -593,11 +674,12 @@ WebAuth.prototype.renewAuth = function(options, cb) {
  * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`
  * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
  * @param {String} [options.timeout] value in milliseconds used to timeout when the `/authorize` call is failing as part of the silent authentication with postmessage enabled due to a configuration.
+ * @param {String} [options.organization] the id or name of an organization to log in to
  * @param {checkSessionCallback} cb
  * @see {@link https://auth0.com/docs/libraries/auth0js/v9#using-checksession-to-acquire-new-tokens}
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.checkSession = function(options, cb) {
+WebAuth.prototype.checkSession = function (options, cb) {
   var params = objectHelper
     .merge(this.baseOptions, [
       'clientID',
@@ -658,7 +740,7 @@ WebAuth.prototype.checkSession = function(options, cb) {
  * @see   {@link https://auth0.com/docs/api/authentication#change-password}
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.changePassword = function(options, cb) {
+WebAuth.prototype.changePassword = function (options, cb) {
   return this.client.dbConnection.changePassword(options, cb);
 };
 
@@ -670,6 +752,7 @@ WebAuth.prototype.changePassword = function(options, cb) {
  * @param {String} options.send what will be sent via email which could be `link` or `code`. For SMS `code` is the only one valid
  * @param {String} [options.phoneNumber] phone number where to send the `code`. This parameter is mutually exclusive with `email`
  * @param {String} [options.email] email where to send the `code` or `link`. This parameter is mutually exclusive with `phoneNumber`
+ * @param {String} [options.captcha] the attempted solution for the captcha, if one was presented
  * @param {String} options.connection name of the passwordless connection
  * @param {Object} [options.authParams] additional Auth parameters when using `link`
  * @param {Object} [options.xRequestLanguage] value for the X-Request-Language header. If not set, the language is detected using the client browser.
@@ -677,7 +760,7 @@ WebAuth.prototype.changePassword = function(options, cb) {
  * @see   {@link https://auth0.com/docs/api/authentication#passwordless}
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.passwordlessStart = function(options, cb) {
+WebAuth.prototype.passwordlessStart = function (options, cb) {
   var authParams = objectHelper
     .merge(this.baseOptions, [
       'responseType',
@@ -713,7 +796,7 @@ WebAuth.prototype.passwordlessStart = function(options, cb) {
  * @see   {@link https://auth0.com/docs/api/authentication#signup}
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.signup = function(options, cb) {
+WebAuth.prototype.signup = function (options, cb) {
   return this.client.dbConnection.signup(options, cb);
 };
 
@@ -721,6 +804,13 @@ WebAuth.prototype.signup = function(options, cb) {
  * Redirects to the hosted login page (`/authorize`) in order to start a new authN/authZ transaction.
  * After that, you'll have to use the {@link parseHash} function at the specified `redirectUri`.
  *
+ * @example
+ * auth0.authorize({
+ *   audience: 'https://mystore.com/api/v2',
+ *   scope: 'read:order write:order',
+ *   responseType: 'token',
+ *   redirectUri: 'https://example.com/auth/callback'
+ *});
  * @method authorize
  * @param {Object} [options]
  * @param {String} [options.clientID] the Client ID found on your Application settings page
@@ -729,15 +819,15 @@ WebAuth.prototype.signup = function(options, cb) {
  * @param {String} [options.responseMode] how the Auth response is encoded and redirected back to the client. Supported values are `query`, `fragment` and `form_post`. The `query` value is only supported when `responseType` is `code`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html#ResponseModes}
  * @param {String} [options.state] value used to mitigate XSRF attacks. {@link https://auth0.com/docs/protocols/oauth2/oauth-state}
  * @param {String} [options.nonce] value used to mitigate replay attacks when using Implicit Grant. {@link https://auth0.com/docs/api-auth/tutorials/nonce}
- * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`
+ * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`. Defaults to `openid profile email`.
  * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
- * @param {String} [options.organization] the Id of an organization to log in to
+ * @param {String} [options.organization] the id or name of an organization to log in to
  * @param {String} [options.invitation] the ID of an invitation to accept. This is available from the user invitation URL that is given when participating in a user invitation flow
  * @param {Object} [options.appState] any values that you want back on the authentication response
  * @see {@link https://auth0.com/docs/api/authentication#authorize-client}
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.authorize = function(options) {
+WebAuth.prototype.authorize = function (options) {
   var params = objectHelper
     .merge(this.baseOptions, [
       'clientID',
@@ -786,12 +876,12 @@ WebAuth.prototype.authorize = function(options) {
  * @see   {@link https://auth0.com/docs/api-auth/grant/password}
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.signupAndAuthorize = function(options, cb) {
+WebAuth.prototype.signupAndAuthorize = function (options, cb) {
   var _this = this;
 
   return this.client.dbConnection.signup(
     objectHelper.blacklist(options, ['popupHandler']),
-    function(err) {
+    function (err) {
       if (err) {
         return cb(err);
       }
@@ -829,11 +919,12 @@ WebAuth.prototype.signupAndAuthorize = function(options, cb) {
  * @param {String} [options.email] Email (mutually exclusive with username)
  * @param {String} [options.password] Password
  * @param {String} [options.realm] Realm used to authenticate the user, it can be a realm name or a database connection name
+ * @param {String} [options.captcha] the attempted solution for the captcha, if one was presented
  * @param {onRedirectingCallback} [options.onRedirecting] Hook function that is called before redirecting to /authorize, allowing you to handle custom code. You must call the `done` function to resume authentication.
  * @param {crossOriginLoginCallback} cb Callback function called only when an authentication error, like invalid username or password, occurs. For other types of errors, there will be a redirect to the `redirectUri`.
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.login = function(options, cb) {
+WebAuth.prototype.login = function (options, cb) {
   var params = objectHelper
     .merge(this.baseOptions, [
       'clientID',
@@ -884,7 +975,7 @@ WebAuth.prototype.login = function(options, cb) {
  * @param {crossOriginLoginCallback} cb Callback function called only when an authentication error, like invalid username or password, occurs. For other types of errors, there will be a redirect to the `redirectUri`.
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.passwordlessLogin = function(options, cb) {
+WebAuth.prototype.passwordlessLogin = function (options, cb) {
   var params = objectHelper
     .merge(this.baseOptions, [
       'clientID',
@@ -934,7 +1025,7 @@ WebAuth.prototype.passwordlessLogin = function(options, cb) {
  * @deprecated Use {@link crossOriginVerification} instead.
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.crossOriginAuthenticationCallback = function() {
+WebAuth.prototype.crossOriginAuthenticationCallback = function () {
   this.crossOriginVerification();
 };
 
@@ -944,7 +1035,7 @@ WebAuth.prototype.crossOriginAuthenticationCallback = function() {
  * @method crossOriginVerification
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.crossOriginVerification = function() {
+WebAuth.prototype.crossOriginVerification = function () {
   this.crossOriginAuthentication.callback();
 };
 
@@ -964,7 +1055,7 @@ WebAuth.prototype.crossOriginVerification = function() {
  * @see   {@link https://auth0.com/docs/api/authentication#logout}
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.logout = function(options) {
+WebAuth.prototype.logout = function (options) {
   windowHelper.redirect(this.client.buildLogoutUrl(options));
 };
 
@@ -988,7 +1079,7 @@ WebAuth.prototype.logout = function(options) {
  * @param {Function} cb
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.passwordlessVerify = function(options, cb) {
+WebAuth.prototype.passwordlessVerify = function (options, cb) {
   var _this = this;
   var params = objectHelper
     .merge(this.baseOptions, [
@@ -1019,7 +1110,7 @@ WebAuth.prototype.passwordlessVerify = function(options, cb) {
 
   params = this.transactionManager.process(params);
 
-  return this.client.passwordless.verify(params, function(err) {
+  return this.client.passwordless.verify(params, function (err) {
     if (err) {
       return cb(err);
     }
@@ -1029,7 +1120,7 @@ WebAuth.prototype.passwordlessVerify = function(options, cb) {
     }
 
     if (typeof options.onRedirecting === 'function') {
-      return options.onRedirecting(function() {
+      return options.onRedirecting(function () {
         doAuth();
       });
     }
@@ -1039,6 +1130,13 @@ WebAuth.prototype.passwordlessVerify = function(options, cb) {
 };
 
 /**
+ * @callback captchaLoadedCallback
+ * @param {Error} [error] Error returned if request to get captcha challenge fails
+ * @param {Object} [payload] An object containing a callback to trigger the captcha (only if Arkose is the provider)
+ * @param {Function} [payload.triggerCaptcha] Triggers the captcha with the first parameter as a callback to be fired after it's solved
+ */
+
+/**
  *
  * Renders the captcha challenge in the provided element.
  * This function can only be used in the context of a Classic Universal Login Page.
@@ -1046,16 +1144,79 @@ WebAuth.prototype.passwordlessVerify = function(options, cb) {
  * @method renderCaptcha
  * @param {HTMLElement} element The element where the captcha needs to be rendered
  * @param {Object} options The configuration options for the captcha
- * @param {Object} [options.templates] An object containaing templates for each captcha provider
- * @param {Function} [options.templates.auth0] template function receiving the challenge and returning an string
- * @param {Function} [options.templates.recaptcha_v2] template function receiving the challenge and returning an string
- * @param {Function} [options.templates.recaptcha_enterprise] template function receiving the challenge and returning an string
- * @param {String} [options.lang=en] the ISO code of the language for recaptcha
- * @param {Function} [callback] An optional completion callback
+ * @param {Object} [options.templates] An object containing templates for each captcha provider
+ * @param {Function} [options.templates.auth0] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.recaptcha_v2] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.recaptcha_enterprise] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.hcaptcha] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.friendly_captcha] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.arkose] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.auth0_v2] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.error] template function returning a custom error message when the challenge could not be fetched, receives the error as first argument
+ * @param {String} [options.lang=en] the ISO code of the language for the captcha provider
+ * @param {captchaLoadedCallback} [callback] An optional callback called after captcha is loaded
  * @memberof WebAuth.prototype
  */
-WebAuth.prototype.renderCaptcha = function(element, options, callback) {
-  return captcha.render(this.client, element, options, callback);
+WebAuth.prototype.renderCaptcha = function (element, options, callback) {
+  return captcha.render(this.client, captcha.Flow.DEFAULT, element, options, callback);
+};
+
+/**
+ *
+ * Renders the passwordless captcha challenge in the provided element.
+ * This function can only be used in the context of a Classic Universal Login Page.
+ *
+ * @method renderPasswordlessCaptcha
+ * @param {HTMLElement} element The element where the captcha needs to be rendered
+ * @param {Object} options The configuration options for the captcha
+ * @param {Object} [options.templates] An object containing templates for each captcha provider
+ * @param {Function} [options.templates.auth0] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.recaptcha_v2] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.recaptcha_enterprise] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.hcaptcha] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.friendly_captcha] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.arkose] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.auth0_v2] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.error] template function returning a custom error message when the challenge could not be fetched, receives the error as first argument
+ * @param {String} [options.lang=en] the ISO code of the language for the captcha provider
+ * @param {captchaLoadedCallback} [callback] An optional callback called after captcha is loaded
+ * @memberof WebAuth.prototype
+ */
+WebAuth.prototype.renderPasswordlessCaptcha = function (
+  element,
+  options,
+  callback
+) {
+  return captcha.render(this.client, captcha.Flow.PASSWORDLESS, element, options, callback);
+};
+
+/**
+ *
+ * Renders the password reset captcha challenge in the provided element.
+ * This function can only be used in the context of a Classic Universal Login Page.
+ *
+ * @method renderPasswordResetCaptcha
+ * @param {HTMLElement} element The element where the captcha needs to be rendered
+ * @param {Object} options The configuration options for the captcha
+ * @param {Object} [options.templates] An object containing templates for each captcha provider
+ * @param {Function} [options.templates.auth0] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.recaptcha_v2] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.recaptcha_enterprise] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.hcaptcha] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.friendly_captcha] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.arkose] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.auth0_v2] template function receiving the challenge and returning a string
+ * @param {Function} [options.templates.error] template function returning a custom error message when the challenge could not be fetched, receives the error as first argument
+ * @param {String} [options.lang=en] the ISO code of the language for the captcha provider
+ * @param {captchaLoadedCallback} [callback] An optional callback called after captcha is loaded
+ * @memberof WebAuth.prototype
+ */
+WebAuth.prototype.renderPasswordResetCaptcha = function (
+  element,
+  options,
+  callback
+) {
+  return captcha.render(this.client, captcha.Flow.PASSWORD_RESET, element, options, callback);
 };
 
 export default WebAuth;
